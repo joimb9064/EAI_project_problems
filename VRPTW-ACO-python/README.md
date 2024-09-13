@@ -16,18 +16,20 @@ A **python** implementation of a **ant colony optimization** based solution to *
 Before starting, ensure that you have Python installed on your system. The code was tested with Python 3.6, but it should work with other 3.x versions as well.
 
 1) **Clone the Repository:** Open your terminal or command prompt and run the following command to clone the repository:
+   
 git clone https://github.com/jonzhaocn/VRPTW-ACO-python.git
 
 
 
 
-2) **Navigate to the Directory:** Change your current directory to the cloned repository. You can do this with the `cd` command:
+3) **Navigate to the Directory:** Change your current directory to the cloned repository. You can do this with the `cd` command:
+   
 cd VRPTW-ACO-python
 
 
 
 
-3) **Change the `file_path` Variable:** If you are going to run the code on your own computer, you need to change the `file_path` variable to the path where your `c101.txt` file is located. 
+4) **Change the `file_path` Variable:** If you are going to run the code on your own computer, you need to change the `file_path` variable to the path where your `c101.txt` file is located. 
 
 For example, your `main.py` script might contain the following lines:
 if name == 'main': file_path = '/Users/josephimbien/Desktop/EAI_projects/eai_project_problems/VRPTW-ACO-python/solomon-100/c101.txt' ants_num = 10
@@ -36,4 +38,5 @@ if name == 'main': file_path = '/Users/josephimbien/Desktop/EAI_projects/eai_pro
 
 
 4) **Run the Code:** You can now run the Python scripts. For example, to run `example1.py`, use the following command:
+   
 python example1.py
