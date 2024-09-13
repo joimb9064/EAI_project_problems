@@ -18,6 +18,7 @@ Before starting, ensure that you have Python installed on your system. The code 
 gh repo clone joimb9064/EAI_project_problems
 ```
 
+**Another way** of cloning this is using the "Github Desktop".
 
 
 2) **Navigate to the Directory:** Change your current directory to the cloned repository. You can do this with the `cd` command:
@@ -44,3 +45,4 @@ ants_num = 10
 ```
 python example1.py
 ```
+
