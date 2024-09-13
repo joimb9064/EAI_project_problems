@@ -11,9 +11,6 @@ A **python** implementation of a **ant colony optimization** based solution to *
 ## Reference
 1. `Gambardella L M, Taillard É, Agazzi G. Macs-vrptw: A multiple colony system for vehicle routing problems with time windows[C]//New ideas in optimization. 1999.`
 
-
-## How to run the python code sample:
-
 ## How to Run the Python Code Sample:
 
 Before starting, ensure that you have Python installed on your system. The code was tested with Python 3.6, but it should work with other 3.x versions as well.
