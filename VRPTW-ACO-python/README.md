@@ -29,7 +29,9 @@ cd VRPTW-ACO-python
 
 
 
-3) **Change the `file_path` Variable:** If you are going to run the code on your own computer, you need to change the `file_path` variable to the path where your `c101.txt` file is located. I suggest creating your own script name on this step.
+3) **Change the `file_path` Variable:** If you are going to run the code on your own computer, you need to change the `file_path` variable to the path where your `c101.txt` file is located. When running the code, it is recommended to create your own Python script file. Instead of using `example1.py`, create a new `.py` file in the same directory and write your code in that file. This will allow you to make modifications and run your own experiments without altering the original code.
+
+For instance, you might create a file named `my_script.py`. 
 
 For example, your `main.py` script might contain the following lines:
 ```
