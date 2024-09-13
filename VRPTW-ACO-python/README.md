@@ -14,12 +14,16 @@ A **python** implementation of a **ant colony optimization** based solution to *
 
 ## How to run the python code sample:
 
-1) Clone the Repository: Open your terminal or command prompt and run:
+## How to Run the Python Code Sample:
+
+Before starting, ensure that you have Python installed on your system. The code was tested with Python 3.6, but it should work with other 3.x versions as well.
+
+1) **Clone the Repository:** Open your terminal or command prompt and run the following command to clone the repository:
 git clone https://github.com/jonzhaocn/VRPTW-ACO-python.git
 
-2) Navigate to the Directory: Change your directory to the cloned repository:
+2) **Navigate to the Directory:** Change your current directory to the cloned repository. You can do this with the `cd` command:
 cd VRPTW-ACO-python
 
-3) Run the Code: You can now run the Python scripts. For example, to run example1.py, use:
+3) **Run the Code:** You can now run the Python scripts. For example, to run `example1.py`, use the following command:
 python example1.py
 
