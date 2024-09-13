@@ -2,10 +2,10 @@ from vrptw_base import VrptwGraph
 from basic_aco import BasicACO
 
 if __name__ == '__main__':
-    file_path = '/Users/josephimbien/Desktop/EAI_projects/eai_project_problems/VRPTW-ACO-python/solomon-100/c102.txt'
+    file_path = '/Users/josephimbien/Desktop/EAI_project_problems/VRPTW-ACO-python/solomon-100/c102.txt'
     ants_num = 10
     max_iter = 200
-    beta = 3
+    beta = 5
     q0 = 0.1
     alpha = 1.0  # Add the alpha parameter here
     Q = 1.0  # Add the Q parameter here

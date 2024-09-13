@@ -213,11 +213,7 @@ class Ant:
         return best_insert_index
 
     def insertion_procedure(self, stop_even: Event):
-        """
-        为每个未访问的结点尝试性地找到一个合适的位置，插入到当前的travel_path
-        插入的位置不能违反载重，时间，行驶距离的限制
-        :return:
-        """
+
         if self.index_to_visit_empty():
             return
 
@@ -285,7 +281,6 @@ class Ant:
                                 if not graph.nodes[new_path[depot_before_start_b]].is_depot:
                                     raise RuntimeError('error')
 
-                                # 判断发生改变的route a是否是feasible的
                                 success_route_a = False
                                 check_ant = Ant(graph, new_path[depot_before_start_a])
                                 for ind in new_path[depot_before_start_a + 1:]:
@@ -300,7 +295,6 @@ class Ant:
                                 check_ant.clear()
                                 del check_ant
 
-                                # 判断发生改变的route b是否是feasible的
                                 success_route_b = False
                                 check_ant = Ant(graph, new_path[depot_before_start_b])
                                 for ind in new_path[depot_before_start_b + 1:]:
@@ -319,7 +313,6 @@ class Ant:
                                     if new_path_distance < travel_distance:
                                         # print('success to search')
 
-                                        # 删除路径中连在一起的depot中的一个
                                         for temp_ind in range(1, len(new_path)):
                                             if graph.nodes[new_path[temp_ind]].is_depot and graph.nodes[new_path[temp_ind - 1]].is_depot:
                                                 new_path.pop(temp_ind)
@@ -345,7 +338,6 @@ class Ant:
                 new_path = temp_path
                 new_path_distance = temp_distance
 
-                # 设置i_start
                 i_start = (i_start + 1) % (new_path.count(0)-1)
                 i_start = max(i_start, 1)
             else:
