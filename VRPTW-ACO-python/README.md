@@ -19,19 +19,21 @@ Before starting, ensure that you have Python installed on your system. The code 
 git clone https://github.com/jonzhaocn/VRPTW-ACO-python.git
 
 
+
+
 2) **Navigate to the Directory:** Change your current directory to the cloned repository. You can do this with the `cd` command:
 cd VRPTW-ACO-python
 
+
+
+
 3) **Change the `file_path` Variable:** If you are going to run the code on your own computer, you need to change the `file_path` variable to the path where your `c101.txt` file is located. 
 
-For example, if your `main.py` script contains the following lines:
+For example, your `main.py` script might contain the following lines:
+if name == 'main': file_path = '/Users/josephimbien/Desktop/EAI_projects/eai_project_problems/VRPTW-ACO-python/solomon-100/c101.txt' ants_num = 10
 
-```python
-if __name__ == '__main__':
-    file_path = '/Users/josephimbien/Desktop/EAI_projects/eai_project_problems/VRPTW-ACO-python/solomon-100/c101.txt'
-    ants_num = 10
 
-4)**Run the Code:** You can now run the Python scripts. For example, to run example1.py, use the following command:
 
-```python
+
+4) **Run the Code:** You can now run the Python scripts. For example, to run `example1.py`, use the following command:
 python example1.py
