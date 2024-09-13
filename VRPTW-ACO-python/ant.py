@@ -2,10 +2,15 @@ import numpy as np
 import copy
 from vrptw_base import VrptwGraph
 from threading import Event
+import csv
+import os
+import datetime
 
+# Initialize the results list
+results = []
 
 class Ant:
-    def __init__(self, graph: VrptwGraph, start_index=0):
+    def __init__(self, graph: VrptwGraph, start_index=0, cost_of_violation=100):
         super()
         self.graph = graph
         self.current_index = start_index
@@ -13,6 +18,7 @@ class Ant:
         self.vehicle_travel_time = 0
         self.travel_path = [start_index]
         self.arrival_time = [0]
+        self.cost_of_violation = cost_of_violation  # Add this line
 
         self.index_to_visit = list(range(graph.node_num))
         self.index_to_visit.remove(start_index)
@@ -23,29 +29,74 @@ class Ant:
         self.travel_path.clear()
         self.index_to_visit.clear()
 
-    def move_to_next_index(self, next_index):
-        # 更新蚂蚁路径
+    def move_to_next_index(self, next_index, iteration, best_vehicle_num):
+        penalty = 0
+        # Updating ant path
         self.travel_path.append(next_index)
-        self.total_travel_distance += self.graph.node_dist_mat[self.current_index][next_index]
+        self.total_travel_distance += self.graph.node_dist_mat[self.current_index][next_index] + penalty
 
         dist = self.graph.node_dist_mat[self.current_index][next_index]
+        arrival_time = self.vehicle_travel_time + dist
+        start_service = max(arrival_time, self.graph.nodes[next_index].ready_time)
+        end_service = start_service + self.graph.nodes[next_index].service_time  # calculate end service time
+
+        # Calculate penalty if arrival_time is after due_time
+        if arrival_time > self.graph.nodes[next_index].due_time:
+            penalty = self.cost_of_violation * (arrival_time - self.graph.nodes[next_index].due_time)  # Change this line
+
+        # Store the information in a dictionary
+        result = {
+            'Iteration': iteration,
+            'Moving from node': self.current_index,
+            'To node': next_index,
+            'Distance traveled': round(dist, 2),
+            'Arrival time': round(arrival_time, 2),
+            'Start service at node': round(start_service, 2),
+            'End service at node': round(end_service, 2),  # added end service time
+            'Vehicle capacity before departure': self.vehicle_load,
+            'Customer number at node': self.graph.nodes[next_index].demand,
+            'Total travel distance': round(self.total_travel_distance, 2),  # added total travel distance
+            'Number of vehicles used': best_vehicle_num,  # added number of vehicles used
+            'Penalty': round(penalty, 2)  # added penalty
+        }
+
+        # Add the dictionary to the results list
+        results.append(result)
+
         self.arrival_time.append(self.vehicle_travel_time + dist)
 
         if self.graph.nodes[next_index].is_depot:
-            # 如果一下个位置为服务器点，则要将车辆负载等清空
+            # If the next position is a server point, the vehicle load, etc. should be cleared
             self.vehicle_load = 0
             self.vehicle_travel_time = 0
-
         else:
-            # 更新车辆负载、行驶距离、时间
+            # Update vehicle load, travel distance, and time
             self.vehicle_load += self.graph.nodes[next_index].demand
-            # 如果早于客户要求的时间窗(ready_time)，则需要等待
-
+            # If it is earlier than the customer's request window (ready_time), you need to wait
             self.vehicle_travel_time += dist + max(self.graph.nodes[next_index].ready_time - self.vehicle_travel_time - dist, 0) + self.graph.nodes[next_index].service_time
             self.index_to_visit.remove(next_index)
 
         self.current_index = next_index
 
+    def write_to_csv(self):
+        # After all iterations are done, write the results to a CSV file
+        csv_dir = "/Users/josephimbien/desktop/EAI_project_problems/VRPTW-ACO-python/csv"
+        
+        # Get current date and time
+        now = datetime.datetime.now()
+        # Format as a string
+        now_str = now.strftime("%Y-%m-%d-%H-%M-%S")
+        
+        # Include the date and time in the filename
+        csv_path = os.path.join(csv_dir, f'results_{now_str}.csv')
+
+        with open(csv_path, 'w', newline='') as csvfile:
+            fieldnames = ['Iteration', 'Moving from node', 'To node', 'Distance traveled', 'Arrival time', 'Start service at node', 'End service at node', 'Vehicle capacity before departure', 'Customer number at node', 'Total travel distance', 'Number of vehicles used', 'Penalty']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+            writer.writeheader()
+            for result in results:
+                writer.writerow(result)
     def index_to_visit_empty(self):
         return len(self.index_to_visit) == 0
 
@@ -53,11 +104,7 @@ class Ant:
         return self.travel_path.count(0)-1
 
     def check_condition(self, next_index) -> bool:
-        """
-        检查移动到下一个点是否满足约束条件
-        :param next_index:
-        :return:
-        """
+
         if self.vehicle_load + self.graph.nodes[next_index].demand > self.graph.vehicle_capacity:
             return False
 
@@ -65,21 +112,23 @@ class Ant:
         wait_time = max(self.graph.nodes[next_index].ready_time - self.vehicle_travel_time - dist, 0)
         service_time = self.graph.nodes[next_index].service_time
 
-        # 检查访问某一个旅客之后，能否回到服务店
-        if self.vehicle_travel_time + dist + wait_time + service_time + self.graph.node_dist_mat[next_index][0] > self.graph.nodes[0].due_time:
+        # Calculate penalty if arrival_time is after due_time
+        arrival_time = self.vehicle_travel_time + dist
+        penalty = 0
+        if arrival_time > self.graph.nodes[next_index].due_time:
+            penalty = self.cost_of_violation * (arrival_time - self.graph.nodes[next_index].due_time)  # Change this line
+
+        # Check whether it is possible to return to the service store after visiting a certain customer
+        if self.vehicle_travel_time + dist + wait_time + service_time + penalty + self.graph.node_dist_mat[next_index][0] > self.graph.nodes[0].due_time:
             return False
 
-        # 不可以服务due time之外的旅客
-        if self.vehicle_travel_time + dist > self.graph.nodes[next_index].due_time:
+        # You cannot serve customers outside the due time
+        if self.vehicle_travel_time + dist + penalty > self.graph.nodes[next_index].due_time:
             return False
 
         return True
-
     def cal_next_index_meet_constrains(self):
-        """
-        找出所有从当前位置（ant.current_index）可达的customer
-        :return:
-        """
+
         next_index_meet_constrains = []
         for next_ind in self.index_to_visit:
             if self.check_condition(next_ind):
@@ -87,12 +136,6 @@ class Ant:
         return next_index_meet_constrains
 
     def cal_nearest_next_index(self, next_index_list):
-        """
-        从待选的customers中选择，离当前位置（ant.current_index）最近的customer
-
-        :param next_index_list:
-        :return:
-        """
         current_ind = self.current_index
 
         nearest_ind = next_index_list[0]
@@ -116,45 +159,33 @@ class Ant:
         return distance
 
     def try_insert_on_path(self, node_id, stop_event: Event):
-        """
-        尝试性地将node_id插入当前的travel_path中
-        插入的位置不能违反载重，时间，行驶距离的限制
-        如果有多个位置，则找出最优的位置
-        :param node_id:
-        :return:
-        """
+
         best_insert_index = None
         best_distance = None
 
         for insert_index in range(len(self.travel_path)):
 
             if stop_event.is_set():
-                # print('[try_insert_on_path]: receive stop event')
                 return
 
             if self.graph.nodes[self.travel_path[insert_index]].is_depot:
                 continue
 
-            # 找出insert_index的前面的最近的depot
             front_depot_index = insert_index
             while front_depot_index >= 0 and not self.graph.nodes[self.travel_path[front_depot_index]].is_depot:
                 front_depot_index -= 1
             front_depot_index = max(front_depot_index, 0)
 
-            # check_ant从front_depot_index出发
             check_ant = Ant(self.graph, self.travel_path[front_depot_index])
 
-            # 让check_ant 走过 path中下标从front_depot_index开始到insert_index-1的点
             for i in range(front_depot_index+1, insert_index):
                 check_ant.move_to_next_index(self.travel_path[i])
 
-            # 开始尝试性地对排序后的index_to_visit中的结点进行访问
             if check_ant.check_condition(node_id):
                 check_ant.move_to_next_index(node_id)
             else:
                 continue
 
-            # 如果可以到node_id，则要保证vehicle可以行驶回到depot
             for next_ind in self.travel_path[insert_index:]:
 
                 if stop_event.is_set():
@@ -164,7 +195,6 @@ class Ant:
                 if check_ant.check_condition(next_ind):
                     check_ant.move_to_next_index(next_ind)
 
-                    # 如果回到了depot
                     if self.graph.nodes[next_ind].is_depot:
                         temp_front_index = self.travel_path[insert_index-1]
                         temp_back_index = self.travel_path[insert_index]
@@ -177,7 +207,6 @@ class Ant:
                             best_insert_index = insert_index
                         break
 
-                # 如果不可以回到depot，则返回上一层
                 else:
                     break
 
@@ -193,14 +222,11 @@ class Ant:
             return
 
         success_to_insert = True
-        # 直到未访问的结点中没有一个结点可以插入成功
         while success_to_insert:
 
             success_to_insert = False
-            # 获取未访问的结点
             ind_to_visit = np.array(copy.deepcopy(self.index_to_visit))
 
-            # 获取为访问客户点的demand，降序排序
             demand = np.zeros(len(ind_to_visit))
             for i, ind in zip(range(len(ind_to_visit)), ind_to_visit):
                 demand[i] = self.graph.nodes[ind].demand
@@ -217,7 +243,6 @@ class Ant:
                 if best_insert_index is not None:
                     self.travel_path.insert(best_insert_index, node_id)
                     self.index_to_visit.remove(node_id)
-                    # print('[insertion_procedure]: success to insert %d(node id) in %d(index)' % (node_id, best_insert_index))
                     success_to_insert = True
 
             del demand
@@ -230,13 +255,11 @@ class Ant:
     @staticmethod
     def local_search_once(graph: VrptwGraph, travel_path: list, travel_distance: float, i_start, stop_event: Event):
 
-        # 找出path中所有的depot的位置
         depot_ind = []
         for ind in range(len(travel_path)):
             if graph.nodes[travel_path[ind]].is_depot:
                 depot_ind.append(ind)
 
-        # 将self.travel_path分成多段，每段以depot开始，以depot结束，称为route
         for i in range(i_start, len(depot_ind)):
             for j in range(i + 1, len(depot_ind)):
 
@@ -308,10 +331,6 @@ class Ant:
         return None, None, None
 
     def local_search_procedure(self, stop_event: Event):
-        """
-        对当前的已经访问完graph中所有节点的travel_path使用cross进行局部搜索
-        :return:
-        """
         new_path = copy.deepcopy(self.travel_path)
         new_path_distance = self.total_travel_distance
         times = 100
@@ -335,3 +354,4 @@ class Ant:
         self.travel_path = new_path
         self.total_travel_distance = new_path_distance
         print('[local_search_procedure]: local search finished')
+
