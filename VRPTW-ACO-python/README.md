@@ -4,7 +4,7 @@ A **python** implementation of a **ant colony optimization** based solution to *
 ## Example
 
 <p align="center">
-	<img src="/image/c101-example.gif">
+	<img src="/VRPTW-ACO-python/image/c101-example.gif">
 </p>
 
 ## Reference
