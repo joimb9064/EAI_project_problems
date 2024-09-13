@@ -21,6 +21,14 @@ git clone https://github.com/jonzhaocn/VRPTW-ACO-python.git
 2) **Navigate to the Directory:** Change your current directory to the cloned repository. You can do this with the `cd` command:
 cd VRPTW-ACO-python
 
-3) **Run the Code:** You can now run the Python scripts. For example, to run `example1.py`, use the following command:
+3) **Change the file_path** If you are going to run the code in your own computer,change this path, but i suggest creating your own python file with the absolute path in your PC.
+
+   if __name__ == '__main__':
+    file_path = '/Users/josephimbien/Desktop/EAI_projects/eai_project_problems/VRPTW-ACO-python/solomon-100/c101.txt'
+    ants_num = 10
+
+4) **Run the Code:** You can now run the Python scripts. For example, to run `example1.py`, use the following command:
 python example1.py
+
+
 
