@@ -39,12 +39,11 @@ class Ant:
         arrival_time = self.vehicle_travel_time + dist
         start_service = max(arrival_time, self.graph.nodes[next_index].ready_time)
         end_service = start_service + self.graph.nodes[next_index].service_time  # calculate end service time
-
+       
         # Calculate penalty if arrival_time is after due_time
         if arrival_time > self.graph.nodes[next_index].due_time:
             penalty = self.cost_of_violation * (arrival_time - self.graph.nodes[next_index].due_time)  # Change this line
-
-        # Store the information in a dictionary
+        nodes_visited = self.travel_path   # List of nodes visited so far
         result = {
             'Iteration': iteration,
             'Moving from node': self.current_index,
@@ -57,9 +56,9 @@ class Ant:
             'Customer number at node': self.graph.nodes[next_index].demand,
             'Total travel distance': round(self.total_travel_distance, 2),  # added total travel distance
             'Number of vehicles used': best_vehicle_num,  # added number of vehicles used
-            'Penalty': round(penalty, 2)  # added penalty
+            'Penalty': round(penalty, 2),  # added penalty
+            'Nodes visited': ', '.join(map(str, nodes_visited))  # added nodes visited
         }
-
         # Add the dictionary to the results list
         results.append(result)
 
@@ -91,7 +90,7 @@ class Ant:
         csv_path = os.path.join(csv_dir, f'results_{now_str}.csv')
 
         with open(csv_path, 'w', newline='') as csvfile:
-            fieldnames = ['Iteration', 'Moving from node', 'To node', 'Distance traveled', 'Arrival time', 'Start service at node', 'End service at node', 'Vehicle capacity before departure', 'Customer number at node', 'Total travel distance', 'Number of vehicles used', 'Penalty']
+            fieldnames = ['Iteration', 'Moving from node', 'To node', 'Distance traveled', 'Arrival time', 'Start service at node', 'End service at node', 'Vehicle capacity before departure', 'Customer number at node', 'Total travel distance', 'Number of vehicles used', 'Penalty', 'Nodes visited']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
             writer.writeheader()

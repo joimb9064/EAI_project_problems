@@ -44,6 +44,10 @@ class BasicACO:
     def _basic_aco(self, path_queue_for_figure: Queue):
         start_time_total = time.time()
         start_iteration = 0
+        # Clear the results list at the start of each run
+        global results
+        results = []
+
         for iter in range(self.max_iter):
             self.ants = list(Ant(self.graph) for _ in range(self.ants_num))
             for k in range(self.ants_num):
@@ -63,6 +67,10 @@ class BasicACO:
 
                 self.ants[k].move_to_next_index(0, iter, self.best_vehicle_num)
                 self.graph.local_update_pheromone(self.ants[k].current_index, 0)
+
+                # Only append the result if the next_index is a depot
+                if self.graph.nodes[next_index].is_depot:
+                    results.append(results)
 
             paths_distance = np.array([ant.total_travel_distance for ant in self.ants])
 

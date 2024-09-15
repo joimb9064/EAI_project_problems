@@ -11,6 +11,7 @@ if __name__ == '__main__':
     Q = 1.0  # Add the Q parameter here
     show_figure = True
     
+    
     # Include Q in the VrptwGraph constructor
     graph = VrptwGraph(file_path, Q=Q)
     
