@@ -48,7 +48,7 @@ python example1.py
 
 5) **Visualization:** Download the html file in the html folder, then upload the csv file you wish to be processed from the csv folder of this project. Here are the exceptions applied in the html file. The file contains a lot of data, which for example
 
-   A) The iterations where the Ants were not completed yet in converging a specific path. So the "Nodes Visited" here is set to minimum of 99 nodes.
+   A) The iterations where the Ants were not completed yet in converging a specific path are not being included. So the "Nodes Visited" here is set to minimum of 99 nodes.
 
    B) Applied Penalty is also present in the html functionality but literally not displaying anything as of now since the Ants are very good in avoiding delivery after "Due Time".
 
