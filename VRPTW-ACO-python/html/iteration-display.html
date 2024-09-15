@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iteration Display with Route Visualization</title>
+    <title>Iteration Display (99+ Nodes Only)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <style>
         body {
@@ -28,7 +28,7 @@
     </style>
 </head>
 <body>
-    <h1>Iteration Display with Route Visualization</h1>
+    <h1>Iteration Display (99+ Nodes Only)</h1>
     <input type="file" id="csvFile" accept=".csv">
     <br><br>
     <label for="iterationSlider">Adjust Iteration:</label>
@@ -44,10 +44,15 @@
             const file = e.target.files[0];
             Papa.parse(file, {
                 complete: function(results) {
-                    csvData = results.data.filter(row => row.length > 11).map(parseRow);
+                    csvData = results.data
+                        .filter(row => row.length > 12)
+                        .map(parseRow)
+                        .filter(row => row.nodes.length >= 99);
                     updateSlider();
                     if (csvData.length > 0) {
                         displayIteration(0);
+                    } else {
+                        document.getElementById('output').innerHTML = '<p>No iterations found with 99 or more nodes visited.</p>';
                     }
                 }
             });
@@ -57,7 +62,7 @@
             return {
                 totalTravelDistance: row[9] || 'N/A',
                 vehicles: row[10] || 'N/A',
-                nodes: row[row.length - 1].split(',').map(n => n.trim())
+                nodes: row[12].split(',').map(n => n.trim())
             };
         }
 
@@ -67,7 +72,7 @@
             slider.value = 0;
             slider.addEventListener('input', function() {
                 const iteration = parseInt(this.value);
-                document.getElementById('sliderValue').textContent = `Iteration: ${iteration}`;
+                document.getElementById('sliderValue').textContent = `Iteration: ${iteration + 1} of ${csvData.length}`;
                 displayIteration(iteration);
             });
         }
@@ -78,9 +83,11 @@
 
             const output = document.getElementById('output');
             output.innerHTML = `
-                <h2>Iteration ${iteration}</h2>
+                <h2>Iteration ${iteration + 1} of ${csvData.length}</h2>
                 <p><strong>Number of Vehicles Used:</strong> ${data.vehicles}</p>
                 <p><strong>Total Travel Distance:</strong> ${data.totalTravelDistance}</p>
+                <p><strong>Number of Nodes Visited:</strong> ${data.nodes.length}</p>
+                <p><strong>Nodes Visited:</strong> ${data.nodes.join(', ')}</p>
             `;
 
             visualizeRoutes(data);
@@ -155,7 +162,7 @@
                     circle.setAttribute("cx", 50 + i * 80);
                     circle.setAttribute("cy", y);
                     circle.setAttribute("r", "5");
-                    circle.setAttribute("fill", node === '0' ? "red" : "blue");
+                    circle.setAttribute("fill", node === '0' ? "red" : (node === '99' ? "green" : "blue"));
                     svg.appendChild(circle);
 
                     const nodeText = document.createElementNS("http://www.w3.org/2000/svg", "text");
