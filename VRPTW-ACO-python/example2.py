@@ -34,3 +34,6 @@ if __name__ == '__main__':
 
     # After all ants have finished moving, write to CSV
     ants[0].write_to_csv()
+
+
+    

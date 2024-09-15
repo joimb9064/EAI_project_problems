@@ -46,6 +46,7 @@ class Ant:
         nodes_visited = self.travel_path   # List of nodes visited so far
         result = {
             'Iteration': iteration,
+            'Customer number at node': self.graph.nodes[next_index].demand,
             'Moving from node': self.current_index,
             'To node': next_index,
             'Distance traveled': round(dist, 2),
@@ -53,7 +54,6 @@ class Ant:
             'Start service at node': round(start_service, 2),
             'End service at node': round(end_service, 2),  # added end service time
             'Vehicle capacity before departure': self.vehicle_load,
-            'Customer number at node': self.graph.nodes[next_index].demand,
             'Total travel distance': round(self.total_travel_distance, 2),  # added total travel distance
             'Number of vehicles used': best_vehicle_num,  # added number of vehicles used
             'Penalty': round(penalty, 2),  # added penalty
@@ -90,7 +90,7 @@ class Ant:
         csv_path = os.path.join(csv_dir, f'results_{now_str}.csv')
 
         with open(csv_path, 'w', newline='') as csvfile:
-            fieldnames = ['Iteration', 'Moving from node', 'To node', 'Distance traveled', 'Arrival time', 'Start service at node', 'End service at node', 'Vehicle capacity before departure', 'Customer number at node', 'Total travel distance', 'Number of vehicles used', 'Penalty', 'Nodes visited']
+            fieldnames = ['Iteration', 'Customer number at node', 'Moving from node', 'To node', 'Distance traveled', 'Arrival time', 'Start service at node', 'End service at node', 'Vehicle capacity before departure', 'Total travel distance', 'Number of vehicles used', 'Penalty', 'Nodes visited']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
             writer.writeheader()
