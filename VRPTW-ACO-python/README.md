@@ -46,3 +46,7 @@ ants_num = 10
 python example1.py
 ```
 
+5) **Vitualization:** Download the html file in the html folder, then upload the csv file you wish to be processed.
+
+
+
