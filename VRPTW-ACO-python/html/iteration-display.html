@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iteration Display (99+ Nodes Only)</title>
+    <title>Iteration Display (99+ Nodes) with Penalty Check</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <style>
         body {
@@ -25,10 +25,14 @@
             font-weight: bold;
             margin-top: 10px;
         }
+        .penalty {
+            color: red;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
-    <h1>Iteration Display (99+ Nodes Only)</h1>
+    <h1>Iteration Display (99+ Nodes) with Penalty Check</h1>
     <input type="file" id="csvFile" accept=".csv">
     <br><br>
     <label for="iterationSlider">Adjust Iteration:</label>
@@ -44,25 +48,31 @@
             const file = e.target.files[0];
             Papa.parse(file, {
                 complete: function(results) {
-                    csvData = results.data
-                        .filter(row => row.length > 12)
-                        .map(parseRow)
-                        .filter(row => row.nodes.length >= 99);
-                    updateSlider();
-                    if (csvData.length > 0) {
-                        displayIteration(0);
-                    } else {
-                        document.getElementById('output').innerHTML = '<p>No iterations found with 99 or more nodes visited.</p>';
-                    }
+                    processData(results.data);
                 }
             });
         });
 
+        function processData(data) {
+            csvData = data
+                .filter(row => row.length > 12)
+                .map(parseRow)
+                .filter(row => row.nodes.length >= 99);
+            updateSlider();
+            if (csvData.length > 0) {
+                displayIteration(0);
+            } else {
+                document.getElementById('output').innerHTML = '<p>No iterations found with 99 or more nodes visited.</p>';
+            }
+        }
+
         function parseRow(row) {
             return {
-                totalTravelDistance: row[9] || 'N/A',
+                totalTravelDistance: parseFloat(row[9]) || 0,
                 vehicles: row[10] || 'N/A',
-                nodes: row[12].split(',').map(n => n.trim())
+                penalty: parseFloat(row[11]) || 0,
+                nodes: row[12].split(',').map(n => n.trim()),
+                hasPenalty: parseFloat(row[11]) > 0
             };
         }
 
@@ -82,10 +92,12 @@
             if (!data) return;
 
             const output = document.getElementById('output');
+            const penaltyClass = data.hasPenalty ? 'penalty' : '';
             output.innerHTML = `
                 <h2>Iteration ${iteration + 1} of ${csvData.length}</h2>
                 <p><strong>Number of Vehicles Used:</strong> ${data.vehicles}</p>
                 <p><strong>Total Travel Distance:</strong> ${data.totalTravelDistance}</p>
+                <p class="${penaltyClass}"><strong>Penalty:</strong> ${data.penalty}</p>
                 <p><strong>Number of Nodes Visited:</strong> ${data.nodes.length}</p>
                 <p><strong>Nodes Visited:</strong> ${data.nodes.join(', ')}</p>
             `;
@@ -95,7 +107,7 @@
 
         function visualizeRoutes(data) {
             const routes = splitIntoRoutes(data.nodes);
-            const svg = createSVG(routes);
+            const svg = createSVG(routes, data.hasPenalty);
             document.getElementById('visualization').innerHTML = '';
             document.getElementById('visualization').appendChild(svg);
         }
@@ -118,7 +130,7 @@
             return routes;
         }
 
-        function createSVG(routes) {
+        function createSVG(routes, hasPenalty) {
             const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             svg.setAttribute("width", "900");
             svg.setAttribute("height", routes.length * 100);
@@ -127,7 +139,7 @@
             routes.forEach((route, index) => {
                 const y = index * 100 + 50;
                 const truckPath = "M10,15 L20,5 L40,5 L50,15 L50,30 L10,30 Z";
-                const color = `hsl(${index * 137.5 % 360}, 50%, 50%)`;
+                const color = hasPenalty ? "red" : `hsl(${index * 137.5 % 360}, 50%, 50%)`;
 
                 // Draw route
                 let pathD = `M50,${y}`;
