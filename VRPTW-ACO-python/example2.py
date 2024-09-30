@@ -1,5 +1,7 @@
 #
-# Pheromone update has been applied if a node has encountered a violation.
+# Phermone update has been applied if a node has encountered a violation.
+# The ants should treat that node as low priority, since the phermone value will decrease which will cause the ants
+# not to pass thru that path since the phermone value does not attrack them.
 # However, it does not add the penalty at the end of the "total cost".
 # Should have a formula of "Total cost = Total Distance travel + Penalty". 
 # Added BasicACO class logic to dump a csv file
@@ -11,7 +13,7 @@ from vrptw_base import VrptwGraph
 from basic_aco import BasicACO
 
 if __name__ == '__main__':
-    file_path = '/Users/josephimbien/Desktop/EAI_project_problems/VRPTW-ACO-python/solomon-100/R201.txt'
+    file_path = '/Users/josephimbien/Desktop/EAI_project_problems/VRPTW-ACO-python/solomon-100/C201.txt'
     ants_num = 10
     max_iter = 200
     beta = 3
