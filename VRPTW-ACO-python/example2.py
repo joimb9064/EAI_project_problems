@@ -2,7 +2,7 @@ from vrptw_base import VrptwGraph
 from basic_aco import BasicACO
 
 if __name__ == '__main__':
-    file_path = '/Users/josephimbien/Desktop/EAI_project_problems/VRPTW-ACO-python/solomon-100/c101.txt'
+    file_path = '/Users/josephimbien/Desktop/EAI_project_problems/VRPTW-ACO-python/solomon-100/R201.txt'
     ants_num = 10
     max_iter = 200
     beta = 3
@@ -21,7 +21,7 @@ if __name__ == '__main__':
 
     # Run the ACO algorithm
     basic_aco.run_basic_aco()
-    basic_aco.cost_of_violation = 5000  # this will affect all Ant objects
+    basic_aco.cost_of_violation = 4000  # this will affect all Ant objects
     # Now, you can access the ants from the BasicACO object
     ants = basic_aco.ants
 

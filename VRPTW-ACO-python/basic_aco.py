@@ -6,6 +6,9 @@ from ant import Ant
 from threading import Thread
 from queue import Queue
 import time
+import csv
+import datetime
+import os
 
 
 class BasicACO:
@@ -25,7 +28,9 @@ class BasicACO:
         self.best_path = None
         self.best_vehicle_num = None
         self.ants = None  # Add this line to initialize the ants attribute
-
+        self.basicACO_results = []  # Add this line to initialize the basicACO_results attribute 
+        # 30 September, added to minimize the phermone to routes with Penalties
+        self.cost_of_violation = cost_of_violation  # Add this line 
         self.whether_or_not_to_show_figure = whether_or_not_to_show_figure
 
     def run_basic_aco(self):
@@ -47,13 +52,13 @@ class BasicACO:
         # Clear the results list at the start of each run
         global results
         results = []
-
+        # 30 September, added to minimize the phermone to routes with Penalties
         for iter in range(self.max_iter):
-            self.ants = list(Ant(self.graph) for _ in range(self.ants_num))
+            self.ants = list(Ant(self.graph, cost_of_violation=self.cost_of_violation) for _ in range(self.ants_num))
             for k in range(self.ants_num):
                 next_index = 0
                 self.ants[k].move_to_next_index(next_index, iter, self.best_vehicle_num)
-                self.graph.local_update_pheromone(self.ants[k].current_index, next_index)
+                self.graph.local_update_pheromone(self.ants[k].current_index, next_index, 0)  # No penalty for depot
 
                 while not self.ants[k].index_to_visit_empty():
                     next_index = self.select_next_index(self.ants[k])
@@ -62,12 +67,13 @@ class BasicACO:
                         if not self.ants[k].check_condition(next_index):
                             next_index = 0
 
+                    penalty = self.ants[k].calculate_penalty(next_index)
                     self.ants[k].move_to_next_index(next_index, iter, self.best_vehicle_num)
-                    self.graph.local_update_pheromone(self.ants[k].current_index, next_index)
+                    self.graph.local_update_pheromone(self.ants[k].current_index, next_index, penalty)
 
                 self.ants[k].move_to_next_index(0, iter, self.best_vehicle_num)
-                self.graph.local_update_pheromone(self.ants[k].current_index, 0)
-
+                self.graph.local_update_pheromone(self.ants[k].current_index, 0, 0)  # No penalty for depot
+         # 30 September, added to minimize the phermone to routes with Penalties
                 # Only append the result if the next_index is a depot
                 if self.graph.nodes[next_index].is_depot:
                     results.append(results)
@@ -80,6 +86,15 @@ class BasicACO:
                 self.best_path_distance = paths_distance[best_index]
                 self.best_vehicle_num = self.best_path.count(0) - 1
                 start_iteration = iter
+
+                self.basicACO_results.append({
+                    'Iteration': iter,
+                    'Improved path distance': self.best_path_distance,
+                    'Iteration path': ', '.join(map(str, self.best_path)),
+                    'Execution time': round(time.time() - start_time_total, 3),
+                    'Total travel distance': round(self.best_path_distance, 2),
+                    'Number of vehicles used': self.best_vehicle_num
+                })
 
                 if self.whether_or_not_to_show_figure:
                     path_queue_for_figure.put(PathMessage(self.best_path, self.best_path_distance))
@@ -96,13 +111,27 @@ class BasicACO:
                 print('\n')
                 print('iteration exit: can not find better solution in %d iteration' % given_iteration)
                 break
-
+        self.write_basicACO_to_csv(self.basicACO_results)
         self.ants[0].write_to_csv()
         
         print('\n')
         print('final best path distance is %f, number of vehicle is %d' % (self.best_path_distance, self.best_vehicle_num))
         print('The best path is: ', self.best_path)  # Print the best path
         print('it takes %0.3f second multiple_ant_colony_system running' % (time.time() - start_time_total))
+
+    def write_basicACO_to_csv(self, basicACO_results):
+        csv_dir = "/Users/josephimbien/desktop/EAI_project_problems/VRPTW-ACO-python/csv"  # specify your directory here
+        now = datetime.datetime.now()
+        now_str = now.strftime("%Y-%m-%d-%H-%M-%S")
+        csv_path = os.path.join(csv_dir, f'basicACO_results_{now_str}.csv')
+
+        with open(csv_path, 'w', newline='') as csvfile:
+            fieldnames = ['Iteration', 'Improved path distance', 'Iteration path', 'Execution time', 'Total travel distance', 'Number of vehicles used']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+            writer.writeheader()
+            for basicACO_result in basicACO_results:
+                writer.writerow(basicACO_result)
     def select_next_index(self, ant): # Update this part September.2024.
         """
         Select the next node
@@ -111,6 +140,13 @@ class BasicACO:
         """
         current_index = ant.current_index
         index_to_visit = ant.index_to_visit
+        # 30 September, added to minimize the phermone to routes with Penalties
+        # Calculate penalties for each potential next node
+        penalties = np.array([ant.calculate_penalty(i) for i in index_to_visit])
+        # 30 September, added to minimize the phermone to routes with Penalties
+        # Adjust heuristic information based on penalties
+        heuristic_with_penalty = np.array([self.graph.calculate_heuristic_with_penalty(current_index, i) for i in index_to_visit])
+
 
         # Use self.alpha to adjust the importance of pheromone information
         transition_prob = np.power(self.graph.pheromone_mat[current_index][index_to_visit], self.alpha) * \

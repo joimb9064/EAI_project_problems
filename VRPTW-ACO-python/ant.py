@@ -18,6 +18,7 @@ class Ant:
         self.vehicle_travel_time = 0
         self.travel_path = [start_index]
         self.arrival_time = [0]
+       # 30 September, added to minimize the phermone to routes with Penalties
         self.cost_of_violation = cost_of_violation  # Add this line
 
         self.index_to_visit = list(range(graph.node_num))
@@ -39,26 +40,32 @@ class Ant:
         arrival_time = self.vehicle_travel_time + dist
         start_service = max(arrival_time, self.graph.nodes[next_index].ready_time)
         end_service = start_service + self.graph.nodes[next_index].service_time  # calculate end service time
-       
+        diff_service_due_date = self.graph.nodes[next_index].due_time - end_service
+        vehicle_capacity_after_departure = self.graph.vehicle_capacity - self.vehicle_load
+
         # Calculate penalty if arrival_time is after due_time
         if arrival_time > self.graph.nodes[next_index].due_time:
             penalty = self.cost_of_violation * (arrival_time - self.graph.nodes[next_index].due_time)  # Change this line
         nodes_visited = self.travel_path   # List of nodes visited so far
         result = {
-            'Iteration': iteration,
-            'Customer number at node': self.graph.nodes[next_index].demand,
-            'Moving from node': self.current_index,
-            'To node': next_index,
-            'Distance traveled': round(dist, 2),
-            'Arrival time': round(arrival_time, 2),
-            'Start service at node': round(start_service, 2),
-            'End service at node': round(end_service, 2),  # added end service time
-            'Vehicle capacity before departure': self.vehicle_load,
-            'Total travel distance': round(self.total_travel_distance, 2),  # added total travel distance
-            'Number of vehicles used': best_vehicle_num,  # added number of vehicles used
-            'Penalty': round(penalty, 2),  # added penalty
-            'Nodes visited': ', '.join(map(str, nodes_visited))  # added nodes visited
-        }
+                'Iteration': iteration,
+                'Customer number at node: Demand': self.graph.nodes[next_index].demand,
+                'Moving from node': self.current_index,
+                'To node': next_index,
+                'Distance traveled': round(dist, 2),
+                'Arrival time': round(arrival_time, 2),
+                'Ready time at node': round(self.graph.nodes[next_index].ready_time, 2),
+                'Start service at node': round(start_service, 2),
+                'End service at node': round(end_service, 2),
+                'Due date at node': round(self.graph.nodes[next_index].due_time, 2),
+                'Difference between End service and Due Date': round(diff_service_due_date, 2),
+                'Vehicle capacity before departure': self.vehicle_load,
+                'Vehicle capacity after departure': vehicle_capacity_after_departure, 
+                'Total travel distance': round(self.total_travel_distance, 2),
+                'Number of vehicles used': best_vehicle_num,
+                'Penalty': round(penalty, 2),
+                'Nodes visited': ', '.join(map(str, nodes_visited))
+            }
         # Add the dictionary to the results list
         results.append(result)
 
@@ -90,7 +97,7 @@ class Ant:
         csv_path = os.path.join(csv_dir, f'results_{now_str}.csv')
 
         with open(csv_path, 'w', newline='') as csvfile:
-            fieldnames = ['Iteration', 'Customer number at node', 'Moving from node', 'To node', 'Distance traveled', 'Arrival time', 'Start service at node', 'End service at node', 'Vehicle capacity before departure', 'Total travel distance', 'Number of vehicles used', 'Penalty', 'Nodes visited']
+            fieldnames = ['Iteration', 'Customer number at node: Demand', 'Moving from node', 'To node', 'Distance traveled', 'Arrival time', 'Ready time at node', 'Start service at node', 'End service at node', 'Due date at node', 'Difference between End service and Due Date', 'Vehicle capacity before departure', 'Vehicle capacity after departure', 'Total travel distance', 'Number of vehicles used', 'Penalty', 'Nodes visited']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
             writer.writeheader()
@@ -147,7 +154,11 @@ class Ant:
                 nearest_ind = next_ind
 
         return nearest_ind
-
+    def calculate_penalty(self, next_index): # 30 September, added to minimize the phermone to routes with Penalties
+        arrival_time = self.vehicle_travel_time + self.graph.node_dist_mat[self.current_index][next_index]
+        if arrival_time > self.graph.nodes[next_index].due_time:
+            return self.cost_of_violation * (arrival_time - self.graph.nodes[next_index].due_time)
+        return 0
     @staticmethod
     def cal_total_travel_distance(graph: VrptwGraph, travel_path):
         distance = 0

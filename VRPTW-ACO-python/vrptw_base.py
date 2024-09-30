@@ -35,7 +35,7 @@ class VrptwGraph:
 
         self.pheromone_mat = np.ones((self.node_num, self.node_num)) * self.init_pheromone_val
         self.heuristic_info_mat = 1 / self.node_dist_mat
-
+        self.penalty_mat = np.zeros((self.node_num, self.node_num))  # 30 September, added to minimize the phermone to routes with Penalties
     def copy(self, init_pheromone_val):
         new_graph = copy.deepcopy(self)
 
@@ -74,19 +74,27 @@ class VrptwGraph:
     def calculate_dist(node_a, node_b):
         return np.linalg.norm((node_a.x - node_b.x, node_a.y - node_b.y))
 
-    def local_update_pheromone(self, start_ind, end_ind):
-        self.pheromone_mat[start_ind][end_ind] = (1-self.rho) * self.pheromone_mat[start_ind][end_ind] + \
-                                                  self.rho * self.init_pheromone_val
+    def local_update_pheromone(self, start_ind, end_ind, penalty):
+        penalty_factor = 1 / (1 + penalty)  # Reduce pheromone more for higher penalties, # 30 September, added to minimize the phermone to routes with Penalties
 
-    def global_update_pheromone(self, best_path, best_path_distance):
+        self.pheromone_mat[start_ind][end_ind] = (1-self.rho) * self.pheromone_mat[start_ind][end_ind] + \
+                                                  self.rho * self.init_pheromone_val * penalty_factor
+        self.penalty_mat[start_ind][end_ind] += penalty
+    def global_update_pheromone(self, best_path, best_path_distance): # 30 September, added to minimize the phermone to routes with Penalties
 
         self.pheromone_mat = (1-self.rho) * self.pheromone_mat
 
         current_ind = best_path[0]
         for next_ind in best_path[1:]:
-            # Use self.Q instead of self.rho in the pheromone update
-            self.pheromone_mat[current_ind][next_ind] += self.Q/best_path_distance
+            penalty_factor = 1 / (1 + self.penalty_mat[current_ind][next_ind])
+            self.pheromone_mat[current_ind][next_ind] += (self.Q / best_path_distance) * penalty_factor
             current_ind = next_ind
+
+        # Reset penalties after global update
+        self.penalty_mat = np.zeros((self.node_num, self.node_num))
+    def calculate_heuristic_with_penalty(self, current_index, next_index):
+        penalty = self.penalty_mat[current_index][next_index]
+        return self.heuristic_info_mat[current_index][next_index] / (1 + penalty)
 
     def nearest_neighbor_heuristic(self, max_vehicle_num=None):
         index_to_visit = list(range(1, self.node_num))
