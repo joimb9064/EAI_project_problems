@@ -27,8 +27,8 @@ class VrptwAcoFigure:
                 info = self.path_queue.get()
                 while not self.path_queue.empty():
                     info = self.path_queue.get()
-
-                path, distance, used_vehicle_num = info.get_path_info()
+            # Retrieve penalty from info , 30 September 2024.
+                path, distance, used_vehicle_num , penalty = info.get_path_info()
                 if path is None:
                     print('[draw figure]: exit')
                     break
@@ -36,8 +36,8 @@ class VrptwAcoFigure:
                 lines_to_remove = [line for line in self.figure_ax.lines if line.get_label() == 'line']
                 for line in lines_to_remove:
                     line.remove()  # Remove line from axes
-
-                self.figure_ax.set_title('travel distance: %0.2f, number of vehicles: %d ' % (distance, used_vehicle_num))
+            # Include penalty in the title , 30 September 2024.
+                self.figure_ax.set_title('travel distance: %0.2f, number of vehicles: %d, penalty: %0.2f' % (distance, used_vehicle_num, penalty))
                 self._draw_line(path)
             plt.pause(1)
 

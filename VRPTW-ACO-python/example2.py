@@ -1,4 +1,3 @@
-#
 # Phermone update has been applied if a node has encountered a violation.
 # The ants should treat that node as low priority, since the phermone value will decrease which will cause the ants
 # not to pass thru that path since the phermone value does not attrack them.
@@ -8,12 +7,12 @@
 # Added additional fields on the Ant Class to add fields like "Ready Time" and "Due Date", "End of Service minus Due date" and "Nodes Visited".
 # Approved as completed project with Dung.
 # Marked as complete September 30,2024.
-#
+#  Penalty is explisetly added in the output figure.
 from vrptw_base import VrptwGraph
 from basic_aco import BasicACO
 
 if __name__ == '__main__':
-    file_path = '/Users/josephimbien/Desktop/EAI_project_problems/VRPTW-ACO-python/solomon-100/C201.txt'
+    file_path = '/Users/josephimbien/Desktop/EAI_project_problems/VRPTW-ACO-python/solomon-100/R201.txt'
     ants_num = 10
     max_iter = 200
     beta = 3

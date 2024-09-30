@@ -164,15 +164,20 @@ class VrptwGraph:
 
 
 class PathMessage:
-    def __init__(self, path, distance):
+    def __init__(self, path, distance, penalty=None): # Add a penalty parameter , 30 September 2024.
         if path is not None:
             self.path = copy.deepcopy(path)
             self.distance = copy.deepcopy(distance)
+            self.penalty = copy.deepcopy(penalty) if penalty is not None else 0  # Store the penalty information , 30 September 2024.
+
             self.used_vehicle_num = self.path.count(0) - 1
         else:
             self.path = None
             self.distance = None
             self.used_vehicle_num = None
+            self.penalty = None  # Store the penalty information as None if no path is given, 30 September 2024.
+
 
     def get_path_info(self):
-        return self.path, self.distance, self.used_vehicle_num
+       # Return the penalty information along with the other information , 30 September 2024.
+        return self.path, self.distance, self.used_vehicle_num, self.penalty
