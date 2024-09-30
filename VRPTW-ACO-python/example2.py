@@ -1,13 +1,15 @@
-# Phermone update has been applied if a node has encountered a violation.
+# Pheromone update has been applied if a node has encountered a violation.
 # The ants should treat that node as low priority, since the phermone value will decrease which will cause the ants
-# not to pass thru that path since the phermone value does not attrack them.
+# not to pass thru that path since the Pheromone value does not attract them.
 # However, it does not add the penalty at the end of the "total cost".
 # Should have a formula of "Total cost = Total Distance travel + Penalty". 
 # Added BasicACO class logic to dump a csv file
 # Added additional fields on the Ant Class to add fields like "Ready Time" and "Due Date", "End of Service minus Due date" and "Nodes Visited".
 # Approved as completed project with Dung.
 # Marked as complete September 30,2024.
-#  Penalty is explisetly added in the output figure.
+#  Penalty is explicitly added in the output figure.
+# Added additional parameter rho - evaporation rate
+
 from vrptw_base import VrptwGraph
 from basic_aco import BasicACO
 
@@ -17,13 +19,13 @@ if __name__ == '__main__':
     max_iter = 200
     beta = 3
     q0 = 0.2
-    alpha = 0.2 # Add the alpha parameter here
+    alpha = 0.2  # Add the alpha parameter here
     Q = 0.2  # Add the Q parameter here
+    rho = 0.5  # Add the rho parameter here
     show_figure = True
     
-    
-    # Include Q in the VrptwGraph constructor
-    graph = VrptwGraph(file_path, Q=Q)
+    # Include Q and rho in the VrptwGraph constructor
+    graph = VrptwGraph(file_path, rho=rho, Q=Q)
     
     # Include alpha in the BasicACO constructor
     basic_aco = BasicACO(graph, ants_num=ants_num, max_iter=max_iter, alpha=alpha, beta=beta, q0=q0, cost_of_violation=100,
@@ -44,6 +46,3 @@ if __name__ == '__main__':
 
     # After all ants have finished moving, write to CSV
     ants[0].write_to_csv()
-
-
-    

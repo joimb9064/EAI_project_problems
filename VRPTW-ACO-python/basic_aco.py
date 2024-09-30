@@ -143,7 +143,7 @@ class BasicACO:
         # 30 September, added to minimize the phermone to routes with Penalties
         # Calculate penalties for each potential next node
         penalties = np.array([ant.calculate_penalty(i) for i in index_to_visit])
-        # 30 September, added to minimize the phermone to routes with Penalties
+        # 30 September, added to minimize the pheromone to routes with Penalties
         # Adjust heuristic information based on penalties
         heuristic_with_penalty = np.array([self.graph.calculate_heuristic_with_penalty(current_index, i) for i in index_to_visit])
 
