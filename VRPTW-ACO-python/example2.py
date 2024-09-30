@@ -1,5 +1,5 @@
 # Pheromone update has been applied if a node has encountered a violation.
-# The ants should treat that node as low priority, since the phermone value will decrease which will cause the ants
+# TThe ants should treat that node as a low priority, since the pheromone value will decrease, which will cause the ants
 # not to pass thru that path since the Pheromone value does not attract them.
 # However, it does not add the penalty at the end of the "total cost".
 # Should have a formula of "Total cost = Total Distance travel + Penalty". 
@@ -7,7 +7,7 @@
 # Added additional fields on the Ant Class to add fields like "Ready Time" and "Due Date", "End of Service minus Due date" and "Nodes Visited".
 # Approved as completed project with Dung.
 # Marked as complete September 30,2024.
-#  Penalty is explicitly added in the output figure.
+#  Penalty is explicitly added in the output graph figure.
 # Added additional parameter rho - evaporation rate
 
 from vrptw_base import VrptwGraph
@@ -21,7 +21,7 @@ if __name__ == '__main__':
     q0 = 0.2
     alpha = 0.2  # Add the alpha parameter here
     Q = 0.2  # Add the Q parameter here
-    rho = 0.5  # Add the rho parameter here
+    rho = 0.2   # Add the rho parameter here
     show_figure = True
     
     # Include Q and rho in the VrptwGraph constructor
