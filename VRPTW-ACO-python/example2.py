@@ -1,3 +1,12 @@
+#
+# Pheromone update has been applied if a node has encountered a violation.
+# However, it does not add the penalty at the end of the "total cost".
+# Should have a formula of "Total cost = Total Distance travel + Penalty". 
+# Added BasicACO class logic to dump a csv file
+# Added additional fields on the Ant Class to add fields like "Ready Time" and "Due Date", "End of Service minus Due date" and "Nodes Visited".
+# Approved as completed project with Dung.
+#
+#
 from vrptw_base import VrptwGraph
 from basic_aco import BasicACO
 
