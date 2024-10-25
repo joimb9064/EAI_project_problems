@@ -21,20 +21,20 @@ def run(filename, numberOfCustomers, stoppingGap, useLocalSearch, plotBest, save
     # Parameters
     inertiaWeight = 0.9
     inertiaWeightLowerBound = 0.4
-    linearDecreaseStep = 0.000225
-    c = 2.0
-    phi = 0.3
+    linearDecreaseStep = 0.0002
+    c = 2.2
+    phi = 0.35
     numberOfParticles = 30
     depotIndex = 0
-    pTournament = 1
-    tournamentSize = 2
+    pTournament = 0.9
+    tournamentSize = 3
     pC = [0.05 + 0.45 * (math.exp(10*(i-1)/(numberOfParticles-1))-1) / (math.exp(10)-1) for i in range(1,numberOfParticles+1)]
     iterationsWithoutImprovement = 0
     iterationsWithoutRefreshing = 8
-    refreshingGap = 7
+    refreshingGap = 8
     numberOfGenerations = 0
     oldGlobalBestCost = np.Inf
-    timeOut = 10000
+    timeOut = 8000
     newBestNV = []
     newBestTD = []
     genIndex = []
@@ -178,8 +178,8 @@ def run(filename, numberOfCustomers, stoppingGap, useLocalSearch, plotBest, save
 
 
 if __name__ == "__main__":
-    filename = './solomon-instances/r101.txt'
-    numberOfCustomers = 12
+    filename = "/content/c101.txt"
+    numberOfCustomers = 100
     stoppingGap = 1000
     useLocalSearch = True
     plotBest = True
