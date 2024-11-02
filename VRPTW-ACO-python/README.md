@@ -1,57 +1,68 @@
-# Basic Ant Colony Optimization
-A **python** implementation of a **ant colony optimization** based solution to **Vehicle Routing Problem with Time Windows**.
 
+# VRPTW Ant Colony Optimization (ACO)
+
+This project is an implementation of the Ant Colony Optimization (ACO) algorithm for solving the Vehicle Routing Problem with Time Windows (VRPTW). The algorithm employs a colony of ants to find optimized paths for a fleet of vehicles, considering customer time constraints.
+
+## Project Structure
+
+The primary files are:
+
+- **`ant.py`**: Defines the `Ant` class, which represents an individual ant in the ACO algorithm. Each ant searches for a path that minimizes the total route cost.
+- **`basic_aco.py`**: Contains the `BasicACO` class, which sets up and manages the ACO algorithm, handling multiple ants and iterations.
+- **`vprtw_aco_figure.py`**: Provides visualization utilities for the VRPTW solutions using matplotlib.
+- **`vrptw_base.py`**: Defines foundational classes and data structures for VRPTW, such as `Node` and `VrptwGraph`.
+- **`ACO_main_script.py`**: The main script for running the ACO algorithm on VRPTW data. Configures and initiates the optimization process.
+
+## Requirements
+
+To use these scripts, ensure that the following Python packages are installed:
+
+- `numpy`
+- `matplotlib`
+
+You can install these dependencies with:
+```bash
+pip install numpy matplotlib
+```
+
+## Setup and Usage
+
+1. **Download or Clone the Project**  
+   Place all the files (`ant.py`, `basic_aco.py`, `vprtw_aco_figure.py`, `vrptw_base.py`, `ACO_main_script.py`) in the same directory.
+
+2. **Prepare Data**  
+   The `ACO_main_script.py` requires a VRPTW data file, such as `c101.txt`, which should be structured according to Solomon's VRPTW format. Place this file in the designated directory, or update the path in `ACO_main_script.py` accordingly.
+
+3. **Running the Script**  
+   You can run the ACO algorithm by executing the `ACO_main_script.py` file. Open a terminal, navigate to the project directory, and run:
+
+   ```bash
+   python ACO_main_script.py
+   ```
+
+4. **Configuration Parameters**  
+   In `ACO_main_script.py`, several parameters can be adjusted:
+
+   - `ants_num`: Number of ants in each iteration.
+   - `max_iter`: Maximum number of iterations.
+   - `beta`, `q0`, `alpha`: Parameters influencing the ACO algorithm's behavior and convergence.
+
+5. **Results and Visualization**  
+   After running the script, results are saved in a specified results directory. The program may also generate visualizations of the best solution found by the ants, which you can view or save.
+
+## File-Specific Details
+
+- **`ant.py`**: Implements the logic for an individual ant’s journey, including path selection, constraint handling, and cost calculation.
+- **`basic_aco.py`**: Manages the entire ACO process, from initializing the ants and pheromone trails to handling iteration-based updates.
+- **`vprtw_aco_figure.py`**: Uses matplotlib to plot the VRPTW solution, showing nodes and routes.
+- **`vrptw_base.py`**: Contains helper classes, including `Node` for customer locations and `VrptwGraph` to represent the problem graph.
 
 ## Example
 
-<p align="center">
-	<img src="/VRPTW-ACO-python/image/c101-example.gif">
-</p>
+Ensure `ACO_main_script.py` has the correct path to your VRPTW data file, then execute:
 
-
-## How to Run the Python Code Sample:
-
-Before starting, ensure that you have Python installed on your system. The code was tested with Python 3.6, but it should work with other 3.x versions as well.
-
-1) **Clone the Repository:** Open your terminal or command prompt and run the following command to clone the repository:
-```
-gh repo clone joimb9064/EAI_project_problems
+```bash
+python ACO_main_script.py
 ```
 
-**Another way** of cloning this is using the "Github Desktop".
-
-
-2) **Navigate to the Directory:** Change your current directory to the cloned repository. You can do this with the `cd` command:
-```
-cd VRPTW-ACO-python
-```
-
-
-
-3) **Change the `file_path` Variable:** If you are going to run the code on your own computer, you need to change the `file_path` variable to the path where your `c101.txt` file is located. When running the code, it is recommended to create your own Python script file. Instead of using `example1.py`, create a new `.py` file in the same directory and write your code in that file. This will allow you to make modifications and run your own experiments without altering the original code.
-
-For instance, you might create a file named `my_script.py`. 
-
-For example, your `main.py` script might contain the following lines:
-```
-if name == 'main': 
-file_path = '/Users/josephimbien/Desktop/EAI_projects/eai_project_problems/VRPTW-ACO-python/solomon-100/c101.txt' 
-ants_num = 10
-```
-
-
-
-4) **Run the Code:** You can now run the Python scripts. For example, to run `example1.py`, use the following command:
-```
-python example1.py
-```
-
-5) **Visualization:** Download the html file in the html folder, then upload the csv file you wish to be processed from the csv folder of this project. Here are the exceptions applied in the html file. The file contains a lot of data, which for example
-
-   A) The iterations where the Ants were not completed yet in converging a specific path are not being included. So the "Nodes Visited" here is set to minimum of 99 nodes.
-
-   B) Applied Penalty is also present in the html functionality but literally not displaying anything as of now since the Ants are very good in avoiding delivery after "Due Time".
-
-   C) Which Vehicle Delivers on which "Customer No." or node can also be seen as part of the functionality of the post-processing html.
-
-
+You should see progress updates in the terminal, and the results, including route cost and solution paths, will be output to the specified files or directories.
