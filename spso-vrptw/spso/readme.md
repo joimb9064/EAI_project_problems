@@ -1,7 +1,7 @@
 
-# Route Optimization and Scheduling with Constraint-Based Decoding
+# Particle Swarm Optimization (PSO)
 
-This repository contains a set of Python modules designed for constraint-based decoding, optimization, and evaluation of route scheduling solutions, especially applicable to vehicle routing problems. The project employs various algorithms and techniques to ensure that generated routes meet constraints such as time windows, capacity limits, and service requirements.
+This repository contains a set of Python modules designed for constraint-based decoding, optimization, and evaluation of route scheduling solutions, especially applicable to vehicle routing problems. The project employs Particle Swarm Optimization and techniques to ensure that generated routes meet constraints such as time windows, capacity limits, and service requirements.
 
 ## Project Structure
 
