@@ -42,7 +42,7 @@ pip install -r requirements.txt
 
 2. Execute specific modules or integrate them into a main script as needed. For example, to evaluate a solution, you can use:
    ```python
-   from evaluate import evaluateSolution
+   from evaluate import evaluateParticle
    # Code to define a solution and evaluate it
    ```
 
@@ -55,14 +55,14 @@ pip install -r requirements.txt
 
 ```python
 from initializePopulation import initializePopulation
-from evaluate import evaluateSolution
+from evaluate import evaluateParticle
 from plotTools import plotCustomers, plotParticle
 
 # Initialize a population of solutions
 population = initializePopulation(...)
 
-# Evaluate a solution
-cost = evaluateSolution(population[0])
+# Evaluate a particle
+numberOfVehicles, totalDistance = evaluateParticle(population[0], distances, depotIndex)
 
 # Plot customers and optimized paths
 plotCustomers(xCoord, yCoord, demand, readyTime, dueDate, service, arrivalTimeListBest, capacityListBest, numberOfCustomers)
@@ -80,8 +80,9 @@ Each module contains functions that contribute to constraint-based decoding and 
   - `decodeIndividualInstance`: Decodes and validates a single route instance within a larger solution.
 
 - **`evaluate.py`**
-  - `evaluateSolution`: Provides a score for a solution's effectiveness.
-  - `computeCost`: Calculates the cost based on specified metrics.
+  - `evaluateParticle`: Evaluates a particle's position, calculating the number of vehicles used and the total distance traveled.
+  - `objective`: Computes the objective cost based on selected modes like minNV (minimize number of vehicles) or minDist (minimize distance).
+  - `updateBest`: Updates the best known positions and costs if the current solution is better than the previous best.
 
 - **`initializePopulation.py`**
   - `initializePopulation`: Creates an initial set of possible solutions.
