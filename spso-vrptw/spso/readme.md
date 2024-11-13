@@ -95,14 +95,4 @@ Each module contains functions that contribute to constraint-based decoding and 
   - `coeffTimesVelocity`, `addVelocities`, `subtractPositions`, etc.: Helper functions for managing velocity and position updates in the optimization process.
   - `localSearch`: Attempts local improvements on solutions.
 
-## Contributing
 
-If you'd like to contribute, please fork the repository and use a feature branch. Pull requests are welcome!
-
-## License
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
-
-## Contact
-
-For questions or issues, feel free to open an issue in the repository or contact the maintainer.
