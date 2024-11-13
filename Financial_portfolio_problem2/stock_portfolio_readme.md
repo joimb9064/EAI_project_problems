@@ -22,6 +22,3 @@ This Jupyter Notebook provides a comprehensive guide for analyzing stock market 
 15. [Version 5: \((\mu + \lambda)\) Evolutionary Strategies](#15)
 16. [Version 6: \((\mu, \lambda)\) Evolutionary Strategies](#16)
 
----
-
-This notebook provides an in-depth look at using evolutionary algorithms for stock data analysis, ideal for users familiar with Python, data science, and optimization techniques.
