@@ -61,6 +61,3 @@ pip install pyvirtualdisplay
 
 Ensure all dependencies are installed, then start from the top of the notebook. After running the setup cells, observe the agent’s learning progress as it completes more successful pickups and drop-offs with fewer mistakes.
 
-## License
-
-This project is for educational purposes and may be used or modified for personal projects.
